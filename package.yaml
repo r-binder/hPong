@@ -22,9 +22,6 @@ dependencies:
   - base >= 4.7 && < 5
   - array
   - gloss
-  - gloss-rendering
-  - gloss-raster 
-
 library:
   source-dirs: src
 

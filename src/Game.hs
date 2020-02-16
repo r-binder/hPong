@@ -5,6 +5,9 @@ import Data.Array
 type Radius = Float
 type Point = (Float, Float)
 
+data Player = Player1 | Player2 deriving (Eq, Show)
+data State = Running | GameOver Player deriving (Eq, Show)
+
 -- | Data describing the state of the pong game. 
 data PongGame = Game
   { ballLoc    :: Point  -- ^ Pong ball (x, y) location.
@@ -13,10 +16,11 @@ data PongGame = Game
   , player1Vel :: Float  -- ^ Right player paddle velocity.
   , player2    :: Float  -- ^ Left player paddle height.
   , player2Vel :: Float  -- ^ Left player paddle velocity. Zero is the middle of the screen. 
+  , state :: State
   } deriving Show
 
 paddleVel :: Float
-paddleVel = 6
+paddleVel = 200
 
 paddleWidth, paddleHeight, paddleBorderWidth :: Float
 paddleWidth = 26
@@ -45,4 +49,5 @@ initialState = Game
   , player1Vel = 0
   , player2    = 0
   , player2Vel = 0
+  , state      = Running
   }

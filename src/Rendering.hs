@@ -15,15 +15,17 @@ window =
 
 -- | Convert a game state into a picture.
 render :: PongGame -> Picture
-render game = pictures
-  [ ball
-  , walls
-  , mkPaddle rose   ((fromIntegral screenWidth / 2) - paddleWidth / 2)
-    $ player1 game
-  , mkPaddle orange (-(fromIntegral screenWidth / 2) + paddleWidth / 2)
-    $ player2 game
-  ]
+render game = case state game of
+  Running          -> pictures [ball, walls, player1Paddle, player2Paddle]
+  GameOver Player1 -> pictures [walls, player1Paddle]
+  GameOver Player2 -> pictures [walls, player2Paddle]
  where
+  player1Paddle =
+    mkPaddle rose ((fromIntegral screenWidth / 2) - paddleWidth / 2)
+      $ player1 game
+  player2Paddle =
+    mkPaddle orange (-(fromIntegral screenWidth / 2) + paddleWidth / 2)
+      $ player2 game
   ball =
     uncurry translate (ballLoc game) $ color ballColor $ circleSolid ballRadius
   ballColor = dark red

@@ -50,8 +50,8 @@ bounce game = game { ballVel = (vx', vy') }
       && ((by + ballRadius) >= p - paddleHeight / 2)
 
 -- | Update the player positions using its current velocity.
-movePlayers :: PongGame -> PongGame
-movePlayers game = game { player1 = p1', player2 = p2' }
+movePlayers :: Float -> PongGame -> PongGame
+movePlayers seconds game = game { player1 = p1', player2 = p2' }
  where
   p1          = player1 game
   p2          = player2 game
@@ -61,23 +61,33 @@ movePlayers game = game { player1 = p1', player2 = p2' }
   topBound    = (fromIntegral screenHeight / 2) - wallWidth
   paddleSize  = paddleHeight / 2
   p1' = if (v1 > 0 && checkTopBound p1) || (v1 < 0 && checkBottomBound p1)
-    then p1 + v1
+    then p1 + v1 * seconds
     else p1
   p2' = if (v2 > 0 && checkTopBound p2) || (v2 < 0 && checkBottomBound p2)
-    then p2 + v2
+    then p2 + v2 * seconds
     else p2
   checkTopBound p = (p + paddleSize) <= topBound
   checkBottomBound p = (p - paddleSize) >= bottomBound
 
+checkGameOver :: PongGame -> PongGame
+checkGameOver game
+  | bx - ballRadius <= -bound = game { state = GameOver Player1 }
+  | bx + ballRadius >= bound  = game { state = GameOver Player2 }
+  | otherwise                 = game
+ where
+  (bx, _) = ballLoc game
+  bound   = (fromIntegral screenWidth / 2)
+
 -- | Update the game by moving the ball and bouncing off walls.
 update :: Float -> PongGame -> PongGame
-update seconds = bounce . movePlayers . moveBall seconds
+update seconds game = if state game == Running
+  then checkGameOver . bounce . movePlayers seconds . moveBall seconds $ game
+  else game
 
 -- | Respond to key events.
 handleKeys :: Event -> PongGame -> PongGame
 
--- For an 'n' keypress, reset the ball to the center.
-handleKeys (EventKey (Char 'n') _ _ _) game = game { ballLoc = (0, 0) }
+handleKeys (EventKey (Char 'n') _ _ _) game = initialState
 
 handleKeys (EventKey (Char 'w') Down _ _) game =
   game { player2Vel = paddleVel }
@@ -96,5 +106,4 @@ handleKeys (EventKey (SpecialKey KeyDown) Down _ _) game =
 handleKeys (EventKey (SpecialKey KeyDown) Up _ _) game =
   game { player1Vel = 0 }
 
--- Do nothing for all other events.
 handleKeys _ game = game
