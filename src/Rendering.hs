@@ -1,17 +1,17 @@
 module Rendering where
 
-import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss
+import           Graphics.Gloss.Interface.Pure.Game
 
-import Game
+import           Game
 
 background :: Color
 background = black
 
 window :: Display
 window =
---  InWindow "hPong" (screenWidth, screenHeight) (screenOffset, screenOffset)
-  FullScreen
+  InWindow "hPong" (screenWidth, screenHeight) (screenOffset, screenOffset)
+--  FullScreen
 
 -- | Convert a game state into a picture.
 render :: PongGame -> Picture
@@ -52,3 +52,4 @@ render game = case state game of
     ]
 
   paddleColor = light (light blue)
+

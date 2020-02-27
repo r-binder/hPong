@@ -1,6 +1,6 @@
 module Game where
 
-import Data.Array
+import           Data.Array
 
 type Radius = Float
 type Point = (Float, Float)
@@ -11,7 +11,8 @@ data State = Running | GameOver Player deriving (Eq, Show)
 -- | Data describing the state of the pong game. 
 data PongGame = Game
   { ballLoc    :: Point  -- ^ Pong ball (x, y) location.
-  , ballVel    :: Point  -- ^ Pong ball (x, y) velocity. 
+  , ballDir    :: Float  -- ^ Pong ball direction / angle.
+  , ballVel    :: Float  -- ^ Pong ball velocity. 
   , player1    :: Float  -- ^ Right player paddle height. Zero is the middle of the screen. 
   , player1Vel :: Float  -- ^ Right player paddle velocity.
   , player2    :: Float  -- ^ Left player paddle height.
@@ -20,7 +21,7 @@ data PongGame = Game
   } deriving Show
 
 paddleVel :: Float
-paddleVel = 200
+paddleVel = 500
 
 paddleWidth, paddleHeight, paddleBorderWidth :: Float
 paddleWidth = 26
@@ -34,20 +35,20 @@ ballRadius :: Float
 ballRadius = 10
 
 screenWidth, screenHeight, screenOffset :: Int
-screenWidth = 640
-screenHeight = 480
+screenWidth = 1920
+screenHeight = 1080
 screenOffset = 100
 
 fps :: Int
-fps = 60
+fps = 165
 
 initialState :: PongGame
-initialState = Game
-  { ballLoc    = (0, 0)
-  , ballVel    = (-180, 100)
-  , player1    = 0
-  , player1Vel = 0
-  , player2    = 0
-  , player2Vel = 0
-  , state      = Running
-  }
+initialState = Game { ballLoc    = (0, 0)
+                    , ballDir    = pi / 4
+                    , ballVel    = 500
+                    , player1    = 0
+                    , player1Vel = 0
+                    , player2    = 0
+                    , player2Vel = 0
+                    , state      = Running
+                    }
